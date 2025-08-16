@@ -1,0 +1,42 @@
+{
+  "name": "portafolio-alex-ramirez",
+  "version": "1.0.0",
+  "description": "Portafolio personal moderno y responsive",
+  "main": "index.html",
+  "scripts": {
+    "start": "python -m http.server 8000",
+    "serve": "npx serve .",
+    "dev": "python -m http.server 8000",
+    "build": "echo 'No build step required for static site'",
+    "deploy": "echo 'Deploy to your preferred hosting service'"
+  },
+  "keywords": [
+    "portafolio",
+    "portfolio",
+    "web",
+    "developer",
+    "frontend",
+    "responsive",
+    "html",
+    "css",
+    "javascript"
+  ],
+  "author": "Alex Ramirez",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tu-usuario/portafolio.git"
+  },
+  "homepage": "https://tu-usuario.github.io/portafolio",
+  "devDependencies": {
+    "serve": "^14.2.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}
