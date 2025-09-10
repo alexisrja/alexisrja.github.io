@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wallet JWKS Validator</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .description {
+            color: #666;
+            margin-bottom: 30px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #007bff;
+        }
+        .info-section {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .info-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .wallet-address {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .jwks-link {
+            color: #007bff;
+            text-decoration: none;
+            font-family: monospace;
+            word-break: break-all;
+        }
+        .jwks-link:hover {
+            text-decoration: underline;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 20px 0;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+        .result {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .success {
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        .loading {
+            background-color: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+        .details {
+            margin-top: 10px;
+            font-weight: normal;
+            font-size: 14px;
+            font-family: monospace;
+        }
+        .check-item {
+            margin: 5px 0;
+            padding-left: 20px;
+        }
+        .check-pass::before {
+            content: "✓ ";
+            color: #28a745;
+            margin-right: 5px;
+        }
+        .check-fail::before {
+            content: "✗ ";
+            color: #dc3545;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Wallet JWKS Validator</h1>
+        
+        <div class="description">
+            <strong>Purpose:</strong> This page validates the JSON Web Key Set (JWKS) endpoint for the wallet to ensure it meets 
+            Open Payments specifications and contains the expected cryptographic keys for wallet authentication.
+        </div>
+
+        <div class="info-section">
+            <h3>Wallet Information</h3>
+            <p><strong>Wallet Address:</strong> <span class="wallet-address" id="walletAddress"></span></p>
+            <p><strong>JWKS Endpoint:</strong> <a href="#" class="jwks-link" id="jwksLink" target="_blank"></a></p>
+        </div>
+
+        <button id="validateBtn" onclick="validateJWKS()">Validate JWKS</button>
+
+        <div id="result"></div>
+    </div>
+
+    <script>
+        const WALLET_ADDRESS = 'https://alexisrja.github.io';
+        const EXPECTED_KID = 'alexisrja-ed25519-1';
+        const EXPECTED_X = 'bzxMzByrpcUg2O-G-6tjkRiTHYbH_QyAureb7L_F7hc';
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('walletAddress').textContent = WALLET_ADDRESS;
+            const jwksUrl = `${WALLET_ADDRESS}/jwks.json`;
+            const jwksLink = document.getElementById('jwksLink');
+            jwksLink.href = jwksUrl;
+            jwksLink.textContent = jwksUrl;
+        });
+
+        async function validateJWKS() {
+            const button = document.getElementById('validateBtn');
+            const resultDiv = document.getElementById('result');
+            
+            button.disabled = true;
+            resultDiv.className = 'result loading';
+            resultDiv.innerHTML = 'Fetching and validating JWKS...';
+
+            try {
+                const jwksUrl = `${WALLET_ADDRESS}/jwks.json`;
+                const response = await fetch(jwksUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const jwks = await response.json();
+                const validationResult = validateJWKSStructure(jwks);
+                
+                displayResult(validationResult);
+            } catch (error) {
+                displayResult({
+                    success: false,
+                    checks: [],
+                    error: `Failed to fetch JWKS: ${error.message}`
+                });
+            } finally {
+                button.disabled = false;
+            }
+        }
+
+        function validateJWKSStructure(jwks) {
+            const checks = [];
+            let success = true;
+
+            // Check if jwks has keys array
+            if (jwks && Array.isArray(jwks.keys)) {
+                checks.push({ name: 'Has "keys" array', passed: true });
+            } else {
+                checks.push({ name: 'Has "keys" array', passed: false });
+                success = false;
+            }
+
+            // Check if keys array is not empty
+            if (jwks.keys && jwks.keys.length > 0) {
+                checks.push({ name: 'Keys array is not empty', passed: true });
+                
+                const firstKey = jwks.keys[0];
+                
+                // Validate required fields for Open Payments
+                const requiredFields = [
+                    { field: 'kty', expected: 'OKP', actual: firstKey.kty },
+                    { field: 'crv', expected: 'Ed25519', actual: firstKey.crv },
+                    { field: 'alg', expected: 'EdDSA', actual: firstKey.alg }
+                ];
+
+                requiredFields.forEach(({field, expected, actual}) => {
+                    const passed = actual === expected;
+                    checks.push({ 
+                        name: `${field} = "${expected}"`, 
+                        passed,
+                        details: `Found: "${actual}"`
+                    });
+                    if (!passed) success = false;
+                });
+
+                // Check kid is non-empty
+                const hasKid = firstKey.kid && firstKey.kid.trim().length > 0;
+                checks.push({ 
+                    name: 'Has non-empty "kid"', 
+                    passed: hasKid,
+                    details: hasKid ? `Found: "${firstKey.kid}"` : 'Missing or empty'
+                });
+                if (!hasKid) success = false;
+
+                // Check x is non-empty
+                const hasX = firstKey.x && firstKey.x.trim().length > 0;
+                checks.push({ 
+                    name: 'Has non-empty "x"', 
+                    passed: hasX,
+                    details: hasX ? `Found: "${firstKey.x}"` : 'Missing or empty'
+                });
+                if (!hasX) success = false;
+
+                // Check specific expected values
+                const kidMatches = firstKey.kid === EXPECTED_KID;
+                checks.push({ 
+                    name: `kid matches expected value ("${EXPECTED_KID}")`, 
+                    passed: kidMatches,
+                    details: `Found: "${firstKey.kid}"`
+                });
+                if (!kidMatches) success = false;
+
+                const xMatches = firstKey.x === EXPECTED_X;
+                checks.push({ 
+                    name: `x matches expected value`, 
+                    passed: xMatches,
+                    details: `Expected: "${EXPECTED_X}"${firstKey.x ? `\nFound: "${firstKey.x}"` : ''}`
+                });
+                if (!xMatches) success = false;
+
+            } else {
+                checks.push({ name: 'Keys array is not empty', passed: false });
+                success = false;
+            }
+
+            return { success, checks };
+        }
+
+        function displayResult(result) {
+            const resultDiv = document.getElementById('result');
+            
+            if (result.error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `<strong>Error:</strong> ${result.error}`;
+                return;
+            }
+
+            if (result.success) {
+                resultDiv.className = 'result success';
+                resultDiv.innerHTML = '<strong>✓ JWKS Validation Passed!</strong><br>All checks completed successfully.';
+            } else {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = '<strong>✗ JWKS Validation Failed</strong><br>Some checks did not pass.';
+            }
+
+            // Add detailed check results
+            if (result.checks && result.checks.length > 0) {
+                const detailsDiv = document.createElement('div');
+                detailsDiv.className = 'details';
+                detailsDiv.innerHTML = '<strong>Detailed Results:</strong>';
+                
+                result.checks.forEach(check => {
+                    const checkDiv = document.createElement('div');
+                    checkDiv.className = `check-item ${check.passed ? 'check-pass' : 'check-fail'}`;
+                    checkDiv.innerHTML = check.name;
+                    
+                    if (check.details) {
+                        checkDiv.innerHTML += `<br><small style="margin-left: 20px;">${check.details}</small>`;
+                    }
+                    
+                    detailsDiv.appendChild(checkDiv);
+                });
+                
+                resultDiv.appendChild(detailsDiv);
+            }
+        }
+    </script>
+</body>
+</html>
