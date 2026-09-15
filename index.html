@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alexis Ramírez · Portafolio</title>
+  <meta name="description" content="Alexis Ramírez Jiménez, Ingeniero en Sistemas Computacionales. Web apps para negocios locales y educación: Next.js, TypeScript, Node.js y Python.">
+  <meta name="theme-color" content="#0A0716">
+  <meta property="og:title" content="Alexis Ramírez · Portafolio">
+  <meta property="og:description" content="Web apps para negocios locales y educación. Elige una misión.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://alexisrja.github.io/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9' shape-rendering='crispEdges'%3E%3Cpath fill='%23FFD23F' d='M2 0h5v1h1v1h1v5H8v1H7v1H2V8H1V7H0V2h1V1h1z'/%3E%3Cpath fill='%230A0716' d='M3 2h3v1H3zM2 3h1v1H2zM3 4h3v1H3zM6 5h1v1H6zM3 6h3v1H3z'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600&family=Silkscreen:wght@400;700&family=Tilt+Warp&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/arcade.css">
+</head>
+<body>
+  <a class="skip" href="#misiones">Saltar a los proyectos</a>
+
+  <header class="hud" aria-label="Marcador">
+    <div class="hud__in">
+      <a class="hud__player" href="#inicio"><span class="blink" aria-hidden="true">1UP</span> ALEXIS</a>
+      <nav class="hud__nav" aria-label="Secciones">
+        <a href="#misiones">Misiones</a>
+        <a href="#jugador">Jugador</a>
+        <a href="#continuar">Contacto</a>
+      </nav>
+      <div class="hud__meta">
+        <span class="hud__stat">CRÉDITOS <b id="credits">00</b></span>
+        <button class="hud__sound" id="soundToggle" type="button" aria-pressed="false">SONIDO: NO</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ATTRACT MODE -->
+    <section class="attract" id="inicio">
+      <div class="attract__screen">
+        <div class="attract__copy">
+          <p class="eyebrow"><span class="dot" aria-hidden="true"></span> alexis@umb · Estado de México</p>
+          <h1 class="marquee">
+            <span class="marquee__line">Alexis</span>
+            <span class="marquee__line">Ramírez</span>
+          </h1>
+          <p class="attract__lead">
+            Ingeniero en Sistemas Computacionales. Hago web apps que resuelven problemas
+            reales: catálogos, inventarios y sistemas de gestión para negocios locales,
+            y plataformas educativas que funcionan hasta sin internet.
+          </p>
+          <div class="attract__actions">
+            <button class="coin" id="coinBtn" type="button">
+              <span class="coin__slot" aria-hidden="true"></span>
+              Inserta moneda
+            </button>
+            <p class="attract__hint">12 misiones · 3 modos de juego</p>
+          </div>
+        </div>
+
+        <aside class="records" aria-labelledby="recordsTitle">
+          <h2 class="records__title" id="recordsTitle">Tabla de récords</h2>
+          <ol class="records__list">
+            <li><span class="records__val">216</span><span class="records__what">ejercicios que se califican solos</span><span class="records__who">CRP</span></li>
+            <li><span class="records__val">120</span><span class="records__what">lugares en el registro del hackathon</span><span class="records__who">HCK</span></li>
+            <li><span class="records__val">7</span><span class="records__what">materias con IA para secundaria</span><span class="records__who">VSN</span></li>
+            <li><span class="records__val">24</span><span class="records__what">repositorios públicos en GitHub</span><span class="records__who">ARJ</span></li>
+            <li><span class="records__val">4+</span><span class="records__what">años en la informática</span><span class="records__who">ARJ</span></li>
+          </ol>
+        </aside>
+      </div>
+
+      <div class="horizon" aria-hidden="true">
+        <svg class="horizon__peaks" id="peaks" viewBox="0 0 160 30" preserveAspectRatio="none" shape-rendering="crispEdges"></svg>
+        <div class="horizon__floor"></div>
+      </div>
+    </section>
+
+    <!-- SELECT SCREEN -->
+    <section class="select" id="misiones" aria-labelledby="selectTitle">
+      <div class="wrap">
+        <div class="section-head">
+          <p class="eyebrow">Proyectos</p>
+          <h2 class="section-title" id="selectTitle">Selecciona misión</h2>
+          <p class="section-note">Usa las flechas del teclado o toca una casilla.</p>
+        </div>
+
+        <div class="modes" role="group" aria-label="Filtrar por modo">
+          <button class="mode is-on" type="button" data-mode="todas" aria-pressed="true">Todas</button>
+          <button class="mode" type="button" data-mode="negocios" aria-pressed="false" style="--cat: var(--coin)">Negocios</button>
+          <button class="mode" type="button" data-mode="educacion" aria-pressed="false" style="--cat: var(--mint)">Educación</button>
+          <button class="mode" type="button" data-mode="lab" aria-pressed="false" style="--cat: var(--laser)">Laboratorio</button>
+        </div>
+
+        <div class="select__stage">
+          <div class="tiles" id="tiles" role="group" aria-label="Misiones"></div>
+
+          <article class="monitor" id="monitor" aria-live="polite">
+            <div class="monitor__bar">
+              <span id="mNum">MISIÓN 01/12</span>
+              <span class="monitor__mode" id="mMode">NEGOCIOS</span>
+            </div>
+            <div class="crt">
+              <img class="crt__img" id="mShot" src="" alt="">
+              <div class="crt__sprite" id="mSprite" hidden></div>
+              <div class="crt__scan" aria-hidden="true"></div>
+            </div>
+            <div class="monitor__body">
+              <h3 class="monitor__title" id="mTitle"></h3>
+              <p class="monitor__desc" id="mDesc"></p>
+              <ul class="chips" id="mStack" aria-label="Tecnologías"></ul>
+              <dl class="facts">
+                <div><dt>Año</dt><dd id="mYear"></dd></div>
+                <div><dt>Demo</dt><dd id="mLive"></dd></div>
+                <div><dt>Código</dt><dd id="mCode"></dd></div>
+              </dl>
+              <div class="monitor__actions" id="mActions"></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PLAYER SHEET -->
+    <section class="player" id="jugador" aria-labelledby="playerTitle">
+      <div class="wrap player__grid">
+        <div class="player__intro">
+          <p class="eyebrow">Jugador 1</p>
+          <h2 class="section-title" id="playerTitle">Alexis Ramírez Jiménez</h2>
+          <p class="player__lead">
+            Ingeniero en Sistemas Computacionales por la Universidad Mexiquense del Bicentenario.
+            Llevo más de 4 años en la informática y 2 construyendo software para gente real.
+          </p>
+          <ul class="quests">
+            <li><span class="quests__tag" style="--cat: var(--coin)">Negocios</span>Web apps para negocios locales: catálogos, inventarios, puntos de venta y sistemas de gestión.</li>
+            <li><span class="quests__tag" style="--cat: var(--mint)">Edtech</span>Plataformas gamificadas y apps que funcionan sin internet.</li>
+            <li><span class="quests__tag" style="--cat: var(--laser)">Aprendiendo</span>Visión artificial con Python (OpenCV, MediaPipe) y más a fondo Next.js con TypeScript.</li>
+            <li><span class="quests__tag">Comunidad</span>Mucho de lo que sé se lo debo a mi familia, amigos y colegas. Por eso comparto lo que aprendo.</li>
+          </ul>
+        </div>
+
+        <div class="sheet">
+          <dl class="sheet__info">
+            <div><dt>Clase</dt><dd>Ingeniero en Sistemas</dd></div>
+            <div><dt>Base</dt><dd>Almoloya de Alquisiras, Méx.</dd></div>
+            <div><dt>XP</dt><dd>4+ años en informática</dd></div>
+            <div><dt>Especial</dt><dd>Web apps que resuelven</dd></div>
+          </dl>
+
+          <div class="sheet__block">
+            <h3 class="sheet__h">Estado</h3>
+            <div class="meters" id="vitals"></div>
+          </div>
+
+          <div class="sheet__block">
+            <h3 class="sheet__h">Poderes</h3>
+            <div class="meters" id="powers"></div>
+          </div>
+
+          <div class="sheet__block">
+            <h3 class="sheet__h">Arsenal</h3>
+            <ul class="chips chips--loose">
+              <li>TypeScript</li><li>JavaScript</li><li>Next.js</li><li>React</li><li>Tailwind</li>
+              <li>Node.js</li><li>Express</li><li>Python</li><li>Flask</li><li>OpenCV</li>
+              <li>MongoDB</li><li>PostgreSQL</li><li>MySQL</li><li>Git</li><li>Vercel</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTINUE -->
+    <section class="continue" id="continuar" aria-labelledby="continueTitle">
+      <div class="wrap continue__in">
+        <p class="continue__count" id="countdown" aria-hidden="true">9</p>
+        <div>
+          <h2 class="continue__title" id="continueTitle">¿Continuar?</h2>
+          <p class="continue__lead">
+            ¿Tienes un negocio que necesita su sitio, un proyecto educativo o esa idea que
+            quieres sacar adelante? Estoy abierto a proyectos y colaboraciones.
+          </p>
+          <div class="continue__actions">
+            <a class="btn btn--coin" href="https://github.com/alexisrja" target="_blank" rel="noopener">▶ Escríbeme en GitHub</a>
+            <a class="btn" href="https://github.com/alexisrja?tab=repositories" target="_blank" rel="noopener">Ver todos los repositorios</a>
+            <!-- Agrega aquí tu correo o LinkedIn cuando quieras publicarlos:
+            <a class="btn" href="mailto:TU_CORREO">Correo</a>
+            <a class="btn" href="https://www.linkedin.com/in/TU_PERFIL" target="_blank" rel="noopener">LinkedIn</a>
+            -->
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap foot__in">
+      <span>© 2026 Alexis Ramírez Jiménez</span>
+      <span>Hecho a mano en el Estado de México</span>
+    </div>
+  </footer>
+
+  <script src="assets/js/arcade.js"></script>
+</body>
+</html>
